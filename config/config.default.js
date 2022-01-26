@@ -24,12 +24,46 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [];
-
+  config.jwt = {
+    secret: '331751',
+  };
+  // 安全配置 （https://eggjs.org/zh-cn/core/security.html）
+  config.security = {
+    csrf: {
+      enable: false,
+      ignoreJSON: false,
+    },
+    // 允许访问接口的白名单
+    domainWhiteList: [ 'http://localhost:8080','http://localhost:3000'],
+  };
+  // 跨域配置
+  config.cors = {
+    origin: '*',
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+  };
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    mysql : {
+      // 单数据库信息配置
+      client: {
+        // host
+        host: '122.112.173.122',
+        // 端口号
+        port: '3306',
+        // 用户名
+        user: 'root',
+        // 密码
+        password: 'Qiao331751.',
+        // 数据库名
+        database: 'accesscard',
+      },
+      // 是否加载到 app 上，默认开启
+      app: true,
+      // 是否加载到 agent 上，默认关闭
+      agent: false,
+    }
   };
-
   return {
     ...config,
     ...userConfig,
