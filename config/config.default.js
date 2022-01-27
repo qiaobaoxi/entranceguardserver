@@ -11,7 +11,7 @@ module.exports = appInfo => {
    * @type {Egg.EggAppConfig}
    **/
   const config = exports = {
-    mp : {
+    mp: {
       appId: 'wx5ef7ba0acfabf430', // 公众平台应用编号
       appSecret: '', // 公众平台应用密钥
       mchId: '1520875631', // 商户平台商家编号
@@ -23,7 +23,20 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1598428635341_6901';
 
   // add your middleware config here
-  config.middleware = [];
+  config.middleware = ['tokenHandler'];
+  config.tokenHandler = {
+    match(ctx) { // 只匹配指定路由，反之如果只忽略指定路由，可以用ignore
+      //匹配不需要验证token的路由
+      const url = ctx.request.url;
+      if (url.startsWith('/login')) {
+        // ctx.logger.info('config.tokenHandler:','关闭token验证')
+        return false;
+      } else {
+        // ctx.logger.info('config.tokenHandler:','开启token验证')
+        return true; // 开启中间件，开启token验证
+      }
+    }
+  };
   config.jwt = {
     secret: '331751',
   };
@@ -34,7 +47,7 @@ module.exports = appInfo => {
       ignoreJSON: false,
     },
     // 允许访问接口的白名单
-    domainWhiteList: [ 'http://localhost:8080','http://localhost:3000'],
+    domainWhiteList: ['http://localhost:8080', 'http://localhost:3000'],
   };
   // 跨域配置
   config.cors = {
@@ -44,7 +57,7 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-    mysql : {
+    mysql: {
       // 单数据库信息配置
       client: {
         // host
