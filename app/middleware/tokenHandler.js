@@ -7,7 +7,6 @@ module.exports = (options) => {
       try {
         // 解码token
         decode = ctx.app.jwt.verify(token, options.secret);//验证token
-        console.log('decode======>', decode);
         // 获取用户信息
         ctx.decode = decode;
       } catch (error) {
