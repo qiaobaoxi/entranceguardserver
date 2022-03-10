@@ -30,7 +30,11 @@ class bussinessService extends Service {
     }
     async getBussinessList(page,pageSize) {
         const result = await this.app.mysql.select('bussiness', {limit: pageSize, offset: page-1});
-        return result;
+        const count = await this.app.mysql.query('select count(*) from bussiness');
+        return {
+            list:result,
+            count:count[0]['count(*)']
+        };
     }
 }
 
