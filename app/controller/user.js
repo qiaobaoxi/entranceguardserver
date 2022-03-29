@@ -7,8 +7,11 @@ class UserController extends Controller {
     const { ctx } = this;
     try {
       const { page, pageSize } = ctx.request.query
-      const list = await ctx.service.user.getUserList(page,pageSize);
-      ctx.success(list)
+      const result = await ctx.service.user.getUserList(page,pageSize);
+      for(let item of result.list){
+        item.relationData = await ctx.service.userAndcard.getByUserId(item.id)
+      }
+      ctx.success(result)
     } catch (error) {
       ctx.fail("", error.message)
     }
@@ -71,13 +74,39 @@ class UserController extends Controller {
     const { ctx } = this;
     try {
       const { id } = ctx.request.body
-      const user = await ctx.service.user.getBussinessById(id)
+      const user = await ctx.service.user.getUserById(id)
       if(!user){
        return ctx.fail({}, "对象已删除或不存在");
       }else{
-        const result = await ctx.service.user.deleteBussiness(id)
+        const result = await ctx.service.user.deleteUser(id)
         if (result) {
           ctx.success({}, "修改成功")
+        } else {
+          ctx.fail({}, result)
+        }
+      }
+    } catch (error) {
+      ctx.fail("", error.message)
+    }
+  }
+  async saveUserAndCard() {
+    const { ctx } = this;
+    try {
+      let { id,userId,cardsId } = ctx.request.body
+      if(Array.isArray(cardsId)){
+        cardsId=cardsId.join(",");
+      }
+      if(id){
+        const result = await ctx.service.userAndcard.updateData(id,cardsId,userId)
+        if (result) {
+          ctx.success({}, "修改成功")
+        } else {
+          ctx.fail({}, result)
+        }
+      }else{
+        const result = await ctx.service.userAndcard.createUserAndCard(userId,cardsId)
+        if (result) {
+          ctx.success({}, "添加成功")
         } else {
           ctx.fail({}, result)
         }
